@@ -14,6 +14,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::group([
+    'prefix' => 'v1/diagnosis',
+    'namespace' => 'API'
+], function () {
+    Route::get('token', 'ProcessController@token')->name('token');
+    Route::get('symptoms', 'ProcessController@symptoms')->name('symptoms');
+});
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
