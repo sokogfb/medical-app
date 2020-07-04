@@ -20,6 +20,7 @@ Route::group([
 ], function () {
     Route::post('token', 'ProcessController@token')->name('token');
     Route::get('symptoms', 'ProcessController@symptoms')->name('symptoms');
+    Route::get('diagnosis', 'ProcessController@diagnosis')->name('diagnosis');
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

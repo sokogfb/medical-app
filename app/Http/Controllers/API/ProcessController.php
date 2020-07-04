@@ -47,4 +47,20 @@ class ProcessController extends Controller
             'token' => $this->getAccessToken(),
         ]);
     }
+
+    /**
+     * test access diagnosis
+     * @return Exception|GuzzleException|string
+     */
+    public function diagnosis()
+    {
+        return $this->processRequest(config('api-medic.url.diagnosis'), [
+            'token' => $this->getAccessToken(),
+            'symptoms' => [
+                233
+            ],
+            'gender' => 'male',
+            'year_of_birth' => 23
+        ]);
+    }
 }

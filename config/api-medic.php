@@ -28,9 +28,10 @@ return [
      * ---------------------------------
      */
     'url' => [
-        'endpoint' => 'https://healthservice.priaid.ch/',
         'auth_endpoint' => 'https://authservice.priaid.ch/login',
-        'symptoms' => 'symptoms'
+        'endpoint' => 'https://healthservice.priaid.ch/',
+        'symptoms' => 'symptoms',
+        'diagnosis' => 'diagnosis',
     ],
 
     /**

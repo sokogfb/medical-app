@@ -68,6 +68,9 @@ trait ProcessingGate
     private function setRequestOptions(array $data)
     {
         return [
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ],
             'form_params' => $data,
         ];
     }
