@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Traits\ProcessingGate;
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 
@@ -28,19 +30,21 @@ class ProcessController extends Controller
 
     /**
      * test access token
+     * @return Exception|mixed
      */
     public function token()
     {
-        $this->baseUri = config('api-medic.url.auth_endpoint');
-
         return $this->getAccessToken();
     }
 
     /**
      * test access symptoms
+     * @return Exception|GuzzleException|string
      */
     public function symptoms()
     {
-
+        return $this->processRequest(config('api-medic.url.symptoms'), [
+            'token' => $this->getAccessToken(),
+        ]);
     }
 }

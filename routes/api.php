@@ -18,7 +18,7 @@ Route::group([
     'prefix' => 'v1/diagnosis',
     'namespace' => 'API'
 ], function () {
-    Route::get('token', 'ProcessController@token')->name('token');
+    Route::post('token', 'ProcessController@token')->name('token');
     Route::get('symptoms', 'ProcessController@symptoms')->name('symptoms');
 });
 

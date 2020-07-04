@@ -4,6 +4,7 @@
 namespace App\Traits;
 
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
@@ -18,29 +19,40 @@ trait ProcessingGate
      */
     public function getAccessToken()
     {
-        $options = [
-            'header' => [
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . config('api-medic.keys.live.username') . ':' . hash_hmac('md5', config('api-medic.keys.live.password'), 'secret')
-            ]
-        ];
+        try {
+            $options = [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Bearer ' . config('api-medic.keys.live.username') . ':' . base64_encode(hash_hmac('md5', config('api-medic.url.auth_endpoint'), config('api-medic.keys.live.password'), true))
+                ]
+            ];
 
-        $response = $this->processRequest(config('api-medic.url.token'), $options, 'POST', true);
-        dd($response);
+
+            if (Cache::has('api_access_token'))
+                return Cache::get('api_access_token');
+
+            // send request and cache token
+            $response = json_decode($this->processRequest(config('api-medic.url.auth_endpoint'), $options, 'POST', true));
+            return $this->cacheAccessToken($response->Token, $response->ValidThrough);
+        } catch (Exception $exception) {
+            Log::critical('token-exception' . $exception->getMessage());
+            return $exception;
+        }
     }
 
     /**
      * ---------------------------
      * cache access token here
+     * @param string $token
+     * @param int $time_to_live
      * @return mixed
      * --------------------------
      */
-    private function cacheAccessToken()
+    private function cacheAccessToken(string $token, int $time_to_live)
     {
-        if (Cache::has('sms_access_token'))
-            return Cache::get('sms_access_token');
-        return Cache::rememberForever('sms_access_token', function () {
-            return config('sms.keys.token');
+        return Cache::remember('api_access_token', ($time_to_live - 10), function () use ($token) {
+            return $token;
         });
     }
 
@@ -56,12 +68,7 @@ trait ProcessingGate
     private function setRequestOptions(array $data)
     {
         return [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $this->cacheAccessToken(),
-            ],
-            'json' => $data,
+            'form_params' => $data,
         ];
     }
 
