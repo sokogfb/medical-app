@@ -97,9 +97,9 @@ trait ProcessingGate
             ]);
 
             if ($token) {
-                $response = $client->request($method, $requestUrl, $data);
+                $response = $client->requestAsync($method, $requestUrl, $data);
             } else {
-                $response = $client->request($method, $requestUrl, $this->setRequestOptions($data));
+                $response = $client->requestAsync($method, $requestUrl, $this->setRequestOptions($data));
             }
             return ($response->getBody()->getContents());
 

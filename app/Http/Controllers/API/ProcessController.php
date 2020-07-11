@@ -45,6 +45,7 @@ class ProcessController extends Controller
     {
         return $this->processRequest(config('api-medic.url.symptoms'), [
             'token' => $this->getAccessToken(),
+            'language' => 'en-gb'
         ]);
     }
 

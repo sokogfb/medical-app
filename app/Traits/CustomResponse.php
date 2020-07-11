@@ -5,7 +5,6 @@ namespace App\Traits;
 
 
 use App\Http\Resources\API;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
