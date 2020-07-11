@@ -13,14 +13,9 @@ class Symptom extends Model
      */
     protected $fillable = [
         'user_id',
-        'symptoms'
-    ];
-
-    /**
-     * casts
-     */
-    protected $casts = [
-        'symptoms' => 'array'
+        'symptomID',
+        'symptomName',
+        'is_processed',
     ];
 
     /**

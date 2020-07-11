@@ -43,7 +43,17 @@ class ProcessController extends Controller
      */
     public function symptoms()
     {
-        return $this->processRequest(config('api-medic.url.symptoms') . '?token=' . $this->getAccessToken() . '&language=en-gb');
+        return json_decode($this->processRequest(config('api-medic.url.symptoms') . '?token=' . $this->getAccessToken() . '&language=en-gb'));
+    }
+
+    /**
+     * test access symptoms
+     * @param $symptoms
+     * @return Exception|GuzzleException|string
+     */
+    public function fetchSymptom($symptoms)
+    {
+        return json_decode($this->processRequest(config('api-medic.url.symptoms') . '?token=' . $this->getAccessToken() . '&symptoms=[' . $symptoms . ']&language=en-gb'));
     }
 
     /**
@@ -52,6 +62,6 @@ class ProcessController extends Controller
      */
     public function diagnosis()
     {
-        return $this->processRequest(config('api-medic.url.diagnosis') . '?token=' . $this->getAccessToken() . '&language=en-gb&symptoms=[10]&gender=male&year_of_birth=1993');
+        return json_decode($this->processRequest(config('api-medic.url.diagnosis') . '?token=' . $this->getAccessToken() . '&language=en-gb&symptoms=[10]&gender=male&year_of_birth=1993'));
     }
 }

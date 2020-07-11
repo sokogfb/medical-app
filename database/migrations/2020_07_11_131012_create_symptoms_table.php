@@ -16,7 +16,9 @@ class CreateSymptomsTable extends Migration
         Schema::create('symptoms', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
-            $table->json('symptoms');
+            $table->integer('symptomID');
+            $table->string('symptomName');
+            $table->boolean('is_processed')->default(false);
             $table->timestamps();
         });
     }
