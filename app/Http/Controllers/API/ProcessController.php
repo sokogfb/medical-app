@@ -43,10 +43,7 @@ class ProcessController extends Controller
      */
     public function symptoms()
     {
-        return $this->processRequest(config('api-medic.url.symptoms'), [
-            'token' => $this->getAccessToken(),
-            'language' => 'en-gb'
-        ]);
+        return $this->processRequest(config('api-medic.url.symptoms') . '?token=' . $this->getAccessToken() . '&language=en-gb');
     }
 
     /**
@@ -55,13 +52,6 @@ class ProcessController extends Controller
      */
     public function diagnosis()
     {
-        return $this->processRequest(config('api-medic.url.diagnosis'), [
-            'token' => $this->getAccessToken(),
-            'symptoms' => [
-                233
-            ],
-            'gender' => 'male',
-            'year_of_birth' => 23
-        ]);
+        return $this->processRequest(config('api-medic.url.diagnosis') . '?token=' . $this->getAccessToken() . '&language=en-gb&symptoms=[10]&gender=male&year_of_birth=1993');
     }
 }

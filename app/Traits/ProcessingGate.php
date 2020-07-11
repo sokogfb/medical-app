@@ -28,7 +28,6 @@ trait ProcessingGate
                 ]
             ];
 
-
             if (Cache::has('api_access_token'))
                 return Cache::get('api_access_token');
 
@@ -51,7 +50,7 @@ trait ProcessingGate
      */
     private function cacheAccessToken(string $token, int $time_to_live)
     {
-        return Cache::remember('api_access_token', ($time_to_live - 10), function () use ($token) {
+        return Cache::remember('api_access_token', now()->addSeconds(($time_to_live - 10)), function () use ($token) {
             return $token;
         });
     }
@@ -97,9 +96,9 @@ trait ProcessingGate
             ]);
 
             if ($token) {
-                $response = $client->requestAsync($method, $requestUrl, $data);
+                $response = $client->request($method, $requestUrl, $data);
             } else {
-                $response = $client->requestAsync($method, $requestUrl, $this->setRequestOptions($data));
+                $response = $client->request($method, $requestUrl, $this->setRequestOptions($data));
             }
             return ($response->getBody()->getContents());
 
