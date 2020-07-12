@@ -16,6 +16,7 @@ class Welcome extends Component
 {
     public $name;
     public $email;
+    public $chart;
     public $year_of_birth;
     public $genderTypes;
     public $gender;
@@ -251,6 +252,8 @@ class Welcome extends Component
                     $diagnose->symptom->delete();
                     $diagnose->delete();
                 }
+                $this->loadPatients();
+            } else {
                 $this->loadPatients();
             }
         } else {

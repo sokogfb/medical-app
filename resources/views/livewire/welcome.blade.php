@@ -15,14 +15,31 @@
     @if($viewPatients)
         <div class="row">
             <div class="col-md-12">
-                <br>
-                <br>
+                <button type="button" wire:click="loadPatients" wire:loading.attr="disabled"
+                        class="btn btn-outline-success float-right"><b>RELOAD</b>
+                </button>
+                <a href="{{ url('/') }}" wire:loading.attr="disabled"
+                   class="btn btn-outline-primary float-left"><b>HOME PAGE</b>
+                </a>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header bg-success text-center text-uppercase"><b>PATIENT(S) LIST</b>
-                        <button type="button" wire:click="loadPatients" wire:loading.attr="disabled"
-                                class="btn btn-link text-white float-right"><b>Reload</b>
-                        </button>
+                    <div class="card-header bg-primary"><b>GRAPHICAL REPRESENTATION</b></div>
+                    <div class="card-body">
+                        <div wire:poll.300000ms>{{--Reloads after every 2 minutes--}}
+                        <!-- Chart's container -->
+                            <div id="chart" style="height: 300px;"></div>
+                            <!-- Charting library -->
+                        </div>
                     </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-center text-uppercase"><b>PATIENT(S) LIST</b></div>
                     <div class="card-body">
                         @include('inc.alert')
                         <div wire:poll.60000ms="loadPatients">{{--Reloads after every 2 minutes--}}
@@ -36,8 +53,6 @@
                                         <th>Patient Gender</th>
                                         <th>Patient Age</th>
                                         <th>Entry Level(s)</th>
-                                        <th>Symptoms Graphical Representation</th>
-                                        <th>Diagnosis Graphical Representation</th>
                                         <th>Created On</th>
                                     </tr>
                                     </thead>
@@ -47,7 +62,8 @@
                                         <tr>
                                             <td>{{ $count++ }}</td>
                                             <td>{{ $patient->name }}</td>
-                                            <td><a href="mailto:{{ $patient->email }}">{{ $patient->email }}</a></td>
+                                            <td><a href="mailto:{{ $patient->email }}">{{ $patient->email }}</a>
+                                            </td>
                                             <td>{{ $patient->gender }}</td>
                                             <td>{{ \App\Http\Controllers\SystemController::getAge($patient->year_of_birth) }}</td>
                                             <td>
@@ -60,12 +76,6 @@
                                     @endforeach
                                     </tbody>
                                 </table>
-                                <hr>
-                                <div class="form-group">
-                                    <a href="{{ url('/') }}" wire:loading.attr="disabled"
-                                       class="btn btn-outline-success float-right">START NEW DIAGNOSIS
-                                    </a>
-                                </div>
                             @else
                                 <center>
                                     <hr>
@@ -247,7 +257,7 @@
                             <br>
                             <br>
                             <button type="button" wire:click="loadPatients" wire:loading.attr="disabled"
-                                    class="btn btn-lg btn-outline-secondary">-- VIEW CURRENT DIAGNOSIS --
+                                    class="btn btn-lg btn-outline-secondary">-- VIEW PATIENTS --
                             </button>
                         </center>
                     </div>
@@ -353,3 +363,16 @@
         </div>
     </div>
 </div>
+@section('scripts')
+    <!-- Charting library -->
+    <script src="https://unpkg.com/echarts/dist/echarts.min.js"></script>
+    <!-- Chartisan -->
+    <script src="https://unpkg.com/@chartisan/echarts/dist/chartisan_echarts.js"></script>
+    <!-- Your application script -->
+    <script>
+        const chart = new Chartisan({
+            el: '#chart',
+            url: "@chart('medical_chart')",
+        });
+    </script>
+@endsection
