@@ -228,9 +228,8 @@ class Welcome extends Component
      */
     public function proceedToPatients()
     {
-        $diagnoseQuery = Diagnose::query();
         // check if the any valid records exists
-        $valid = $diagnoseQuery
+        $valid = Diagnose::query()
             ->latest()
             ->with('entry', 'symptom')
             ->where('entry_id', $this->entry_id)
@@ -238,7 +237,7 @@ class Welcome extends Component
             ->get();
 
         // check if the any in valid records exists
-        $inValid = $diagnoseQuery
+        $inValid = Diagnose::query()
             ->latest()
             ->with('entry', 'symptom')
             ->where('entry_id', $this->entry_id)

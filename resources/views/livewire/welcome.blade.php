@@ -36,6 +36,8 @@
                                         <th>Patient Gender</th>
                                         <th>Patient Age</th>
                                         <th>Entry Level(s)</th>
+                                        <th>Symptoms Graphical Representation</th>
+                                        <th>Diagnosis Graphical Representation</th>
                                         <th>Created On</th>
                                     </tr>
                                     </thead>
@@ -48,7 +50,11 @@
                                             <td><a href="mailto:{{ $patient->email }}">{{ $patient->email }}</a></td>
                                             <td>{{ $patient->gender }}</td>
                                             <td>{{ \App\Http\Controllers\SystemController::getAge($patient->year_of_birth) }}</td>
-                                            <td><button class="btn btn-outline-primary">View [ {{ number_format(count($patient->entry)) }} ]</button></td>
+                                            <td>
+                                                <button class="btn btn-outline-primary">View
+                                                    [ {{ number_format(count($patient->entry)) }} ]
+                                                </button>
+                                            </td>
                                             <td>{{ date('F d, Y', strtotime($patient->created_at)) }}</td>
                                         </tr>
                                     @endforeach
@@ -61,14 +67,14 @@
                                     </a>
                                 </div>
                             @else
-                               <center>
-                                   <hr>
-                                   <h4 class="text-center text-info"><b>No patients were found.</b></h4>
-                                   <a href="{{ url('/') }}" wire:loading.attr="disabled"
-                                      class="btn btn-outline-success">START NEW DIAGNOSIS
-                                   </a>
-                                   <hr>
-                               </center>
+                                <center>
+                                    <hr>
+                                    <h4 class="text-center text-info"><b>No patients were found.</b></h4>
+                                    <a href="{{ url('/') }}" wire:loading.attr="disabled"
+                                       class="btn btn-outline-success">START NEW DIAGNOSIS
+                                    </a>
+                                    <hr>
+                                </center>
                             @endif
                         </div>
                     </div>
