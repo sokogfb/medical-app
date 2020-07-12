@@ -25,18 +25,19 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-primary"><b>GRAPHICAL REPRESENTATION</b></div>
-                    <div class="card-body">
-                        <div wire:poll.300000ms>{{--Reloads after every 2 minutes--}}
-                        <!-- Chart's container -->
-                            <div id="chart" style="height: 300px;"></div>
-                            <!-- Charting library -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+{{--            <div class="col-md-6">--}}
+{{--                <div class="card">--}}
+{{--                    <div class="card-header bg-primary"><b>GRAPHICAL REPRESENTATION</b></div>--}}
+{{--                    <div class="card-body">--}}
+{{--                        <div wire:poll.300000ms>--}}{{--Reloads after every 2 minutes--}}
+{{--                        <!-- Chart's container -->--}}
+{{--                            <div id="chart" style="height: 300px;"></div>--}}
+{{--                            <!-- Charting library -->--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+            <div class="col-md-3"></div>
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header bg-success text-center text-uppercase"><b>PATIENT(S) LIST</b></div>
@@ -90,12 +91,14 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-3"></div>
         </div>
     @else
         @if(!$show_diagnosis)
             <div class="row">
                 <div class="col-md-1">&nbsp;</div>
                 <div class="col-md-4">
+                    <h2 class="text-muted text-center">-- {{ \App\Http\Controllers\SystemController::pass_greetings_to_user() }} --</h2>
                     <div class="card shadow">
                         <div class="card-header text-uppercase">
                             <b>{{ !$readyToLoad ? 'Patient Details' : 'ApiMedic Symptoms' }}</b></div>
