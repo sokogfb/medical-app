@@ -2,10 +2,12 @@
 
 namespace App\Http\Livewire;
 
+use App\Entry;
 use App\Http\Controllers\API\ProcessController;
 use App\Symptom;
 use App\User;
 use Exception;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
@@ -14,13 +16,12 @@ class Welcome extends Component
     public $name;
     public $email;
     public $year_of_birth;
-    public $user_id;
     public $genderTypes = array('male', 'female', 'others');
     public $gender;
+    public $entry_id;
     public $allSymptoms;
     public $readyToLoad;
     public $patientSymptoms = [];
-    public $symptoms;
 
     public function mount()
     {
@@ -72,11 +73,17 @@ class Welcome extends Component
             'password' => bcrypt($this->email),
         ]);
 
-        $this->reset();
+        $this->reset('name', 'email', 'gender', 'year_of_birth');
+
+        // create entry number
+        $entry = Entry::query()->create([
+            'user_id' => $user->id,
+            'entryNumber' => Str::random(8)
+        ]);
 
         if ($user)
             $this->readyToLoad = true;
-        $this->user_id = $user->id;
+        $this->entry_id = $entry->id;
         session()->flash('success', 'Patient ' . $this->name . ' has been created, Choose the symptoms.');
     }
 
@@ -93,13 +100,14 @@ class Welcome extends Component
         $symptom = null;
 
         foreach ((new ProcessController())->fetchSymptom($this->allSymptoms) as $value) {
-            $symptom = Symptom::query()->where('user_id', $this->user_id)
+            $symptom = Symptom::query()
+                ->where('entry_id', $this->entry_id)
                 ->where('symptomID', $value->ID)
                 ->where('is_processed', false)
                 ->first();
             if (!$symptom)
                 $symptom = Symptom::query()->create([
-                    'user_id' => $this->user_id,
+                    'entry_id' => $this->entry_id,
                     'symptomID' => $value->ID,
                     'symptomName' => $value->Name,
                 ]);
@@ -114,7 +122,8 @@ class Welcome extends Component
     public function loadSymptoms()
     {
         $this->patientSymptoms = Symptom::query()
-            ->where('user_id', $this->user_id)
+            ->with('entry')
+            ->where('entry_id', $this->entry_id)
             ->where('is_processed', false)
             ->get();
     }
@@ -137,11 +146,30 @@ class Welcome extends Component
      */
     public function diagnose()
     {
-//        $this->validate([
-//            'symptoms' => ['required', 'array'],
-//        ]);
+        $passSymptoms = [];
+        $symptoms = Symptom::query()
+            ->with('entry')
+            ->select('symptomID')
+            ->where('entry_id', $this->entry_id)
+            ->where('is_processed', false)
+            ->get();
+        dd($symptoms);
+        $user = $symptoms->first()->entry->user;
+        dd($user);
 
-        dd($this->symptoms);
+        foreach ($symptoms as $symptom) {
+            if (!in_array($symptom->symptomID, $passSymptoms)) {
+                $passSymptoms[] = $symptom->symptomID;
+            }
+        }
+
+        // send diagnosis
+        $results = (new ProcessController())->diagnosis(
+            implode(",", $passSymptoms),
+            $user->gender,
+            $user->year_of_birth
+        );
+        dd($results);
 
     }
 

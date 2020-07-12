@@ -2,37 +2,36 @@
 
 namespace App;
 
+use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Symptom extends Model
 {
+    use Uuids, SoftDeletes;
+
+    /**
+     * stop auto increment
+     */
+    public $incrementing = false;
+
     /**
      * set global attributes
      */
     protected $fillable = [
-        'user_id',
+        'entry_id',
         'symptomID',
         'symptomName',
         'is_processed',
     ];
 
     /**
-     * user
+     * entry
      * @return BelongsTo
      */
-    public function user()
+    public function entry()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * diagnoses
-     * @return HasMany
-     */
-    public function diagnose()
-    {
-        return $this->hasMany(Diagnose::class);
+        return $this->belongsTo(Entry::class);
     }
 }

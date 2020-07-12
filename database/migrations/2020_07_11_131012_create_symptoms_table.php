@@ -14,11 +14,12 @@ class CreateSymptomsTable extends Migration
     public function up()
     {
         Schema::create('symptoms', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedInteger('user_id');
+            $table->uuid('id')->primary();
+            $table->uuid('entry_id');
             $table->integer('symptomID');
             $table->string('symptomName');
             $table->boolean('is_processed')->default(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

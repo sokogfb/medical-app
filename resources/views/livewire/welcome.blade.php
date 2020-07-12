@@ -12,6 +12,7 @@
         <hr>
     </div>
     <div class="row">
+        <div class="col-md-1">&nbsp;</div>
         <div class="col-md-4">
             <div class="card shadow">
                 <div class="card-header">Patient Details</div>
@@ -119,47 +120,44 @@
                     <div class="card-body">
                         <div wire:poll.120000ms="loadSymptoms">{{--Reloads after every 2 minutes--}}
                             @if(count($patientSymptoms))
-                                <form wire:submit.prevent="diagnose" method="post">
-                                    <table class="table-responsive table table-hover">
-                                        <thead>
+                                <table class="table-responsive table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Entry NO.</th>
+                                        <th>Symptom ID</th>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @php($count =1)
+                                    @foreach($patientSymptoms as $patientSymptom)
                                         <tr>
-                                            <th>#</th>
-                                            <th>Symptom ID</th>
-                                            <th>Name</th>
-                                            <th>Action</th>
+                                            <td>{{ $count++ }}</td>
+                                            <td>{{ $patientSymptom->entry->entryNumber }}</td>
+                                            <td>{{ $patientSymptom->symptomID }}</td>
+                                            <td>{{ $patientSymptom->symptomName }}</td>
+                                            <td>
+                                                <button type="button"
+                                                        wire:click="removeSymptom({{ $patientSymptom->id }})"
+                                                        wire:loading.attr="disabled" class="btn btn-danger btn-sm">
+                                                    REMOVE
+                                                </button>
+                                            </td>
                                         </tr>
-                                        </thead>
-                                        <tbody>
-                                        @php($count =1)
-                                        @foreach($patientSymptoms as $patientSymptom)
-                                            <input type="hidden" wire:model.lazy="symptoms[]" id="symptoms"
-                                                   value="{{ $patientSymptom->symptomID }}"
-                                                   required>
-                                            <tr>
-                                                <td>{{ $count++ }}</td>
-                                                <td>{{ $patientSymptom->symptomID }}</td>
-                                                <td>{{ $patientSymptom->symptomName }}</td>
-                                                <td>
-                                                    <button type="button"
-                                                            wire:click="removeSymptom({{ $patientSymptom->id }})"
-                                                            wire:loading.attr="disabled" class="btn btn-danger btn-sm">
-                                                        REMOVE
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                    <hr>
-                                    <div class="form-group">
-                                        <button wire:click="diagnose" wire:loading.attr="disabled" type="submit"
-                                                class="btn btn-outline-success float-right">DIAGNOSE SYMPTOMS
-                                        </button>
-                                    </div>
-                                </form>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                                <hr>
+                                <div class="form-group">
+                                    <button wire:click="diagnose" wire:loading.attr="disabled" type="submit"
+                                            class="btn btn-outline-success float-right">DIAGNOSE SYMPTOMS
+                                    </button>
+                                </div>
                             @else
                                 <hr>
-                                <p class="text-center text-info">No Symptoms have been selected.</p>
+                                <h4 class="text-center text-info"><b>No Symptoms have been selected.</b></h4>
                                 <hr>
                             @endif
                         </div>
@@ -167,15 +165,20 @@
                 </div>
             </div>
         @else
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <center>
                     <img src="{{ asset('img/patient.gif') }}" alt="">
+                    <br>
+                    <br>
+                    <button class="btn btn-lg btn-outline-secondary">-- VIEW CURRENT DIAGNOSIS --</button>
                 </center>
             </div>
         @endif
     </div>
     <div class="row">
         <div class="col-md-12">
+            <br>
+            <br>
             <div class="card-footer">
                 <p class="text-center">&copy; {{ date('Y') }} {{ config('app.name') }}, powered By <span
                         class="text-danger">Api</span><b>Medic</b>. Designed By

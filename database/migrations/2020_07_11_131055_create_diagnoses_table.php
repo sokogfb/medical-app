@@ -14,11 +14,12 @@ class CreateDiagnosesTable extends Migration
     public function up()
     {
         Schema::create('diagnoses', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedInteger('symptom_id');
+            $table->uuid('id')->primary();
+            $table->uuid('entry_id');
             $table->string('name');
             $table->integer('accuracy')->default(0);
             $table->json('diagnosis');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

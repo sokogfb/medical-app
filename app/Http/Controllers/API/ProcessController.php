@@ -58,10 +58,13 @@ class ProcessController extends Controller
 
     /**
      * test access diagnosis
+     * @param $symptoms
+     * @param string $gender
+     * @param int $year_of_birth
      * @return Exception|GuzzleException|string
      */
-    public function diagnosis()
+    public function diagnosis($symptoms, string $gender, int $year_of_birth)
     {
-        return json_decode($this->processRequest(config('api-medic.url.diagnosis') . '?token=' . $this->getAccessToken() . '&language=en-gb&symptoms=[10]&gender=male&year_of_birth=1993'));
+        return json_decode($this->processRequest(config('api-medic.url.diagnosis') . '?token=' . $this->getAccessToken() . '&language=en-gb&symptoms=[' . $symptoms . ']&gender=' . $gender . '&year_of_birth=' . $year_of_birth));
     }
 }

@@ -2,13 +2,20 @@
 
 namespace App;
 
+use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, Uuids, SoftDeletes;
+
+    /**
+     * stop auto increment
+     */
+    public $incrementing = false;
 
     /**
      * The attributes that are mass assignable.
@@ -42,11 +49,11 @@ class User extends Authenticatable
     ];
 
     /**
-     * symptoms
+     * entries
      * @return HasMany
      */
-    public function symptom()
+    public function entry()
     {
-        return $this->hasMany(Symptom::class);
+        return $this->hasMany(Entry::class);
     }
 }
