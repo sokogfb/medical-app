@@ -21,9 +21,11 @@ class Diagnose extends Model
      */
     protected $fillable = [
         'entry_id',
+        'symptom_id',
         'name',
         'accuracy',
-        'diagnosis'
+        'diagnosis',
+        'is_valid'
     ];
 
     /**
@@ -40,5 +42,14 @@ class Diagnose extends Model
     public function entry(): BelongsTo
     {
         return $this->belongsTo(Entry::class, 'entry_id');
+    }
+
+    /**
+     * symptom
+     * @return BelongsTo
+     */
+    public function symptom(): BelongsTo
+    {
+        return $this->belongsTo(Symptom::class, 'symptom_id');
     }
 }

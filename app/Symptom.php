@@ -5,6 +5,7 @@ namespace App;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Symptom extends Model
@@ -32,6 +33,15 @@ class Symptom extends Model
      */
     public function entry(): BelongsTo
     {
-        return $this->belongsTo(Entry::class,'entry_id');
+        return $this->belongsTo(Entry::class, 'entry_id');
+    }
+
+    /**
+     * diagnose
+     * @return HasOne
+     */
+    public function diagnose(): HasOne
+    {
+        return $this->hasOne(Diagnose::class, 'symptom_id');
     }
 }

@@ -16,9 +16,11 @@ class CreateDiagnosesTable extends Migration
         Schema::create('diagnoses', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('entry_id');
+            $table->uuid('symptom_id');
             $table->string('name');
             $table->integer('accuracy')->default(0);
             $table->json('diagnosis');
+            $table->boolean('is_valid')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });

@@ -7,6 +7,7 @@ use App\Http\Controllers\API\ProcessController;
 use App\Symptom;
 use App\User;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -141,7 +142,7 @@ class Welcome extends Component
         $symptom = Symptom::query()->findOrFail($id);
         $symptom->delete();
         $this->loadSymptoms();
-        session()->flash('success', 'Symptom ' . $symptom->symptomName . ' has been removed.');
+        session()->flash('info', 'Symptom ' . $symptom->symptomName . ' has been removed.');
     }
 
     /**

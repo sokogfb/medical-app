@@ -65,6 +65,8 @@ class ProcessController extends Controller
      */
     public function diagnosis($symptoms, string $gender, int $year_of_birth)
     {
+        return $this->processRequest(config('api-medic.url.diagnosis') . '?token=' . $this->getAccessToken() . '&language=en-gb&symptoms=[44]&gender=male&year_of_birth=1993');
+
         return json_decode($this->processRequest(config('api-medic.url.diagnosis') . '?token=' . $this->getAccessToken() . '&language=en-gb&symptoms=[' . $symptoms . ']&gender=' . $gender . '&year_of_birth=' . $year_of_birth));
     }
 }
