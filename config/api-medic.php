@@ -13,12 +13,12 @@ return [
      */
     'keys' => [
         'sandbox' => [
-            'username' => config(env('SANDBOX_API_MEDIC_USERNAME'), 'ososiportal@gmail.com'),
-            'password' => config(env('SANDBOX_API_MEDIC_PASSWORD'), 't9JSj8q6T5MdRr32W'),
+            'username' => config(env('SANDBOX_API_MEDIC_USERNAME')),
+            'password' => config(env('SANDBOX_API_MEDIC_PASSWORD')),
         ],
         'live' => [
-            'username' => config(env('LIVE_API_MEDIC_USERNAME'), 'w9M8W_GMAIL_COM_AUT'),
-            'password' => config(env('LIVE_API_MEDIC_PASSWORD'), 'r3B9Kys5Y4TiHc82W'),
+            'username' => config(env('LIVE_API_MEDIC_USERNAME')),
+            'password' => config(env('LIVE_API_MEDIC_PASSWORD')),
         ],
     ],
 
