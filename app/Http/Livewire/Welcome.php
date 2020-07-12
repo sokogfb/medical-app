@@ -228,23 +228,60 @@ class Welcome extends Component
      */
     public function proceedToPatients()
     {
+        $diagnoseQuery = Diagnose::query();
         // check if the any valid records exists
-        $diagnosis = Diagnose::query()
+        $valid = $diagnoseQuery
             ->latest()
             ->with('entry', 'symptom')
-            ->where('entry_id', $this->entry_id);
-        if (count($diagnosis
+            ->where('entry_id', $this->entry_id)
             ->where('is_valid', true)
-            ->get())) {
-            // loop and remove the issue and symptom
-            foreach ($diagnosis->where('is_valid', false)->get() as $diagnose) {
-                $diagnose->symptom->delete();
-                $diagnose->delete();
+            ->get();
+
+        // check if the any in valid records exists
+        $inValid = $diagnoseQuery
+            ->latest()
+            ->with('entry', 'symptom')
+            ->where('entry_id', $this->entry_id)
+            ->where('is_valid', false)
+            ->get();
+
+        if (count($valid)) {
+            if (count($inValid)) {
+                // loop and remove the issue and symptom
+                foreach ($inValid as $diagnose) {
+                    $diagnose->symptom->delete();
+                    $diagnose->delete();
+                }
+                $this->loadPatients();
             }
-            $this->loadPatients();
         } else {
             session()->flash('warning', 'Sorry! We can\'t proceed until you mark at least one issue as valid diagnosis.');
         }
+    }
+
+    /**
+     * cancel and continue
+     */
+    public function cancelAndContinue()
+    {
+        $entry = Entry::query()
+            ->latest()
+            ->with('symptom', 'diagnose')
+            ->firstWhere('id', $this->entry_id);
+
+        // delete all symptoms
+        foreach ($entry->symptom as $symptom) {
+            $symptom->delete();
+        }
+
+        // delete all diagnosis
+        foreach ($entry->diagnose as $diagnose) {
+            $diagnose->delete();
+        }
+
+        // delete the entry
+        $entry->delete();
+        $this->loadPatients();
     }
 
     /**

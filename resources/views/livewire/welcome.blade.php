@@ -315,7 +315,7 @@
                                     </table>
                                     <hr>
                                     <div class="form-group">
-                                        <button wire:loading.attr="disabled"
+                                        <button wire:click="cancelAndContinue" wire:loading.attr="disabled"
                                                 class="btn btn-outline-danger float-left"> CANCEL AND VIEW PATIENTS
                                         </button>
                                         <button wire:click="proceedToPatients" wire:loading.attr="disabled"
