@@ -37,8 +37,8 @@ class Diagnose extends Model
      * entry
      * @return BelongsTo
      */
-    public function entry()
+    public function entry(): BelongsTo
     {
-        return $this->belongsTo(Entry::class);
+        return $this->belongsTo(Entry::class, 'entry_id');
     }
 }

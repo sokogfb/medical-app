@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Entry extends Model
 {
-    use Uuids,SoftDeletes;
+    use Uuids, SoftDeletes;
 
     /**
      * stop auto increment
@@ -29,7 +29,7 @@ class Entry extends Model
      * user
      * @return BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -38,7 +38,7 @@ class Entry extends Model
      * symptoms
      * @return HasMany
      */
-    public function symptom()
+    public function symptom(): HasMany
     {
         return $this->hasMany(Symptom::class);
     }
@@ -47,7 +47,7 @@ class Entry extends Model
      * diagnose
      * @return HasMany
      */
-    public function diagnose()
+    public function diagnose(): HasMany
     {
         return $this->hasMany(Diagnose::class);
     }

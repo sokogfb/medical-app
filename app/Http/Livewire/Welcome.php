@@ -16,16 +16,19 @@ class Welcome extends Component
     public $name;
     public $email;
     public $year_of_birth;
-    public $genderTypes = array('male', 'female', 'others');
+    public $genderTypes;
     public $gender;
     public $entry_id;
     public $allSymptoms;
     public $readyToLoad;
-    public $patientSymptoms = [];
+    public $show_diagnosis;
+    public $patientSymptoms;
 
     public function mount()
     {
-        $this->readyToLoad = false;
+        $this->genderTypes = array('male', 'female');
+        $this->readyToLoad = $this->show_diagnosis = false;
+        $this->patientSymptoms = [];
     }
 
     /**
@@ -149,13 +152,12 @@ class Welcome extends Component
         $passSymptoms = [];
         $symptoms = Symptom::query()
             ->with('entry')
-            ->select('symptomID')
             ->where('entry_id', $this->entry_id)
             ->where('is_processed', false)
             ->get();
-        dd($symptoms);
+
+        // get the user/patient
         $user = $symptoms->first()->entry->user;
-        dd($user);
 
         foreach ($symptoms as $symptom) {
             if (!in_array($symptom->symptomID, $passSymptoms)) {
