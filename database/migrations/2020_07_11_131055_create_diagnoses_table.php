@@ -17,8 +17,10 @@ class CreateDiagnosesTable extends Migration
             $table->uuid('id')->primary();
             $table->uuid('entry_id');
             $table->uuid('symptom_id');
+            $table->integer('issueID');
             $table->string('name');
-            $table->integer('accuracy')->default(0);
+            $table->longText('issueDescription');
+            $table->double('accuracy')->default(0.00);
             $table->json('diagnosis');
             $table->boolean('is_valid')->default(false);
             $table->softDeletes();

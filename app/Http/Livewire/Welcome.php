@@ -2,12 +2,12 @@
 
 namespace App\Http\Livewire;
 
+use App\Diagnose;
 use App\Entry;
 use App\Http\Controllers\API\ProcessController;
 use App\Symptom;
 use App\User;
 use Exception;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -24,12 +24,15 @@ class Welcome extends Component
     public $readyToLoad;
     public $show_diagnosis;
     public $patientSymptoms;
+    public $patientDiagnosis;
+    public $viewPatients;
+    public $patients;
 
     public function mount()
     {
         $this->genderTypes = array('male', 'female');
-        $this->readyToLoad = $this->show_diagnosis = false;
-        $this->patientSymptoms = [];
+        $this->readyToLoad = $this->show_diagnosis = $this->viewPatients = false;
+        $this->patientSymptoms = $this->patientDiagnosis = $this->patients = [];
     }
 
     /**
@@ -126,6 +129,7 @@ class Welcome extends Component
     public function loadSymptoms()
     {
         $this->patientSymptoms = Symptom::query()
+            ->latest()
             ->with('entry')
             ->where('entry_id', $this->entry_id)
             ->where('is_processed', false)
@@ -150,7 +154,6 @@ class Welcome extends Component
      */
     public function diagnose()
     {
-        $passSymptoms = [];
         $symptoms = Symptom::query()
             ->with('entry')
             ->where('entry_id', $this->entry_id)
@@ -161,19 +164,99 @@ class Welcome extends Component
         $user = $symptoms->first()->entry->user;
 
         foreach ($symptoms as $symptom) {
-            if (!in_array($symptom->symptomID, $passSymptoms)) {
-                $passSymptoms[] = $symptom->symptomID;
+            // send diagnosis
+            $results = (new ProcessController())->diagnosis(
+                $symptom->symptomID,
+                $user->gender,
+                $user->year_of_birth
+            );
+
+            foreach ($results as $result) {
+                Diagnose::query()->create([
+                    'entry_id' => $this->entry_id,
+                    'symptom_id' => $symptom->id,
+                    'issueID' => $result->Issue->ID,
+                    'name' => $result->Issue->Name,
+                    'issueDescription' => $result->Issue->IcdName,
+                    'accuracy' => $result->Issue->Accuracy,
+                    'diagnosis' => $result,
+                ]);
             }
+
+            // update symptom to processed
+            $symptom->update([
+                'is_processed' => true
+            ]);
         }
 
-        // send diagnosis
-        $results = (new ProcessController())->diagnosis(
-            implode(",", $passSymptoms),
-            $user->gender,
-            $user->year_of_birth
-        );
-        dd($results);
+        $this->show_diagnosis = true;
+        session()->flash('success', 'All symptoms were diagnosed successfully');
+        $this->loadDiagnosis();
+    }
 
+    /**
+     * load all diagnosis
+     */
+    public function loadDiagnosis()
+    {
+        $this->patientDiagnosis = Diagnose::query()
+            ->latest()
+            ->with('entry', 'symptom')
+            ->where('entry_id', $this->entry_id)
+            ->get();
+    }
+
+    /**
+     * mark as valid
+     * @param string|null $id
+     * @throws Exception
+     */
+    public function markDiagnosisAsValid(string $id)
+    {
+        $diagnosis = Diagnose::query()
+            ->findOrFail($id);
+        $diagnosis->update([
+            'is_valid' => true
+        ]);
+        $this->loadDiagnosis();
+        session()->flash('success', 'Diagnosis ' . $diagnosis->name . ' has been marked as valid.');
+
+    }
+
+    /**
+     * continue
+     */
+    public function proceedToPatients()
+    {
+        // check if the any valid records exists
+        $diagnosis = Diagnose::query()
+            ->latest()
+            ->with('entry', 'symptom')
+            ->where('entry_id', $this->entry_id);
+        if (count($diagnosis
+            ->where('is_valid', true)
+            ->get())) {
+            // loop and remove the issue and symptom
+            foreach ($diagnosis->where('is_valid', false)->get() as $diagnose) {
+                $diagnose->symptom->delete();
+                $diagnose->delete();
+            }
+            $this->loadPatients();
+        } else {
+            session()->flash('warning', 'Sorry! We can\'t proceed until you mark at least one issue as valid diagnosis.');
+        }
+    }
+
+    /**
+     * load patients
+     */
+    public function loadPatients()
+    {
+        $this->viewPatients = true;
+        $this->patients = User::query()
+            ->with('entry')
+            ->latest()
+            ->get();
     }
 
 

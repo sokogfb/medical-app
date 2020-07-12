@@ -22,7 +22,9 @@ class Diagnose extends Model
     protected $fillable = [
         'entry_id',
         'symptom_id',
+        'issueID',
         'name',
+        'issueDescription',
         'accuracy',
         'diagnosis',
         'is_valid'
